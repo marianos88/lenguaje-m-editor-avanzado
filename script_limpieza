@@ -1,0 +1,26 @@
+let    // Paso 1: Fuente de datos original
+    Origen = Csv.Document(File.Contents("E:\Descargas\table.csv"), [Delimiter = ",", Columns = 5, Encoding = 65001, QuoteStyle = QuoteStyle.None]),
+
+    // PASO intermedio: Subir la primera fila para que existan los nombres de las columnas
+    PromoverEncabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars = true]),
+
+    // Paso 2: El archivo csv tenía comillas dobles por lo tanto se eliminan y luego se quitan los espacios de los extremos
+    LimpiarEspacios = Table.TransformColumns(PromoverEncabezados, {
+        {"nombre_producto", each Text.Trim(Text.Replace(_, """", "")), type text}}),
+
+    // Paso 3: Se estandariza la columna categoria a Title Case
+    EstandarizarCategoria = Table.TransformColumns(LimpiarEspacios, {{"categoria", Text.Proper, type text}}),
+
+    // Paso 4: Se filtra y eliminan registros de prueba
+    EliminarPruebas = Table.SelectRows(EstandarizarCategoria, each [categoria] <> "Prueba"),
+
+    // Paso 5: Se definen tipos de datos correctos
+    TiparColumnas = Table.TransformColumnTypes(EliminarPruebas, {
+		{"id_venta", Int64.Type},
+		{"nombre_producto", type text},
+		{"categoria", type text},
+		{"precio", type number},
+		{"fecha_venta", type date}
+	})
+in
+    TiparColumnas
