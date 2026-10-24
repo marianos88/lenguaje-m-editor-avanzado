@@ -1,4 +1,5 @@
-let    // Paso 1: Fuente de datos original
+```powerquery
+let // Paso 1: Fuente de datos original
     Origen = Csv.Document(File.Contents("E:\Descargas\table.csv"), [Delimiter = ",", Columns = 5, Encoding = 65001, QuoteStyle = QuoteStyle.None]),
 
     // PASO intermedio: Subir la primera fila para que existan los nombres de las columnas
@@ -23,4 +24,4 @@ let    // Paso 1: Fuente de datos original
 		{"fecha_venta", type date}
 	})
 in
-    TiparColumnas
+    TiparColumnas```
